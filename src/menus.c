@@ -14,7 +14,9 @@ int get_options_length(const menu_t *menu) {
 }
 
 
-int standard_menu(const menu_t *menu) {
+menu_return_t standard_menu(const menu_t *menu) {
+    menu_return_t return_val;
+
     // if 0, then they match
     const int name_exists = strlen(menu->name) != 0;
     if ( name_exists ) { printf("-- %s --\n", menu->name); }
@@ -39,7 +41,10 @@ int standard_menu(const menu_t *menu) {
         const int option_is_valid = option >= 1 && option <= menu_options_length;
 
         if ( option_is_valid ) {
-            return option;
+            return_val.idx = option - 1;
+            return_val.str = menu->options[option - 1];
+
+            return return_val;
         }
 
         printf("Please try again\n");
@@ -144,7 +149,9 @@ int free_aliases(aliases_t *aliases) {
     return 0;
 }
 
-int text_menu(const menu_t *menu) {
+menu_return_t text_menu(const menu_t *menu) {
+    menu_return_t res;
+
     const int message_exists = strlen(menu->message) != 0;
     
     if ( message_exists ) {
@@ -214,16 +221,17 @@ int text_menu(const menu_t *menu) {
         printf("Please try again\n");
     }
 
-    printf("%d, %d, %s\n", buf_size, longest_str, buf);
-
     free_aliases(&aliases);
     free(buf);
 
-    return return_idx;
+    res.idx = return_idx;
+    res.str = menu->options[return_idx];
+
+    return res;
 }
 
-int show_menu(const menu_t *menu, menu_type_t menu_type) {
-    int res = -1;
+menu_return_t show_menu(const menu_t *menu, menu_type_t menu_type) {
+    menu_return_t res = { 0, "" };
 
     switch ( menu_type ) {
         case STANDARD:

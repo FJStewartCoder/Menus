@@ -18,6 +18,10 @@ typedef struct {
     char *( options[MAX_MENU_ITEMS] );
 } menu_t;
 
+typedef struct {
+    unsigned int idx;
+    char *str; 
+} menu_return_t;
 
 typedef enum {
     STANDARD,
@@ -25,7 +29,7 @@ typedef enum {
 } menu_type_t;
 
 
-int show_menu(const menu_t *menu, menu_type_t menu_type);
+menu_return_t show_menu(const menu_t *menu, menu_type_t menu_type);
 
 
 #endif // MENUS_H
