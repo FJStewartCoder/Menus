@@ -1,17 +1,63 @@
 #include "menus.h"
 
 
-int get_options_length(const menu_t *menu) {
-    // iterate all of the menu items until null
-    for ( int i = 0; i < MAX_MENU_ITEMS; i++ ) {
-        const char* current = menu->options[i];
+// INITIALISATION FUNCTIONS -----------------------------------------------------------------------------------------------
 
-        if ( current == NULL ) {
-            // no +1 because null will be the first item after the last valid option
-            return i;
-        }
+
+menu_t create_menu(char *name, char *message) {
+    // create a new menu
+    menu_t menu;
+
+    menu.is_valid = true;
+
+    // copy the strings into the memory
+    if ( strlen(name) + 1 <= MAX_MENU_NAME_LENGTH ) {
+        strcpy(menu.name, name);
     }
+    else {
+        menu.is_valid = false;
+        return menu;
+    }
+    
+    if ( strlen(message) + 1 <= MAX_MENU_MESSAGE_LENGTH ) {
+        strcpy(menu.message, message);
+    }
+    else {
+        menu.is_valid = false;
+        return menu;
+    }
+
+    // return the menu
+    return menu;
 }
+
+menu_item_t *add_menu_item(menu_t *menu, char *name, bool is_default) {
+    // basic validation
+    if ( menu->num_options >= MAX_MENU_ITEMS ) {
+        return NULL;
+    }
+
+    // create new menu item
+    menu_item_t new_item;
+
+    // initialise its values
+    new_item.name = name;
+    new_item.is_default;
+
+    // add the item and increment the size count
+    menu->options[menu->num_options] = new_item;
+    menu->num_options = menu->num_options + 1;
+    
+    // return a pointer to the new item
+    return &menu->options[menu->num_options - 1];
+}
+
+
+// HELPER FUNCTIONS -------------------------------------------------------------------------------------------------------
+
+
+
+// STANDARD MENU FUNCTIONS ------------------------------------------------------------------------------------------------
 
 
 menu_return_t standard_menu(const menu_t *menu) {
@@ -21,10 +67,10 @@ menu_return_t standard_menu(const menu_t *menu) {
     const int name_exists = strlen(menu->name) != 0;
     if ( name_exists ) { printf("-- %s --\n", menu->name); }
 
-    const int menu_options_length = get_options_length(menu);
+    const int menu_options_length = menu->num_options;
 
     for (int i = 0; i < menu_options_length; i++) {
-        const char* current = menu->options[i];
+        const char* current = menu->options[i].name;
 
         printf("%d - %s\n", i + 1, current);
     }
@@ -42,7 +88,7 @@ menu_return_t standard_menu(const menu_t *menu) {
 
         if ( option_is_valid ) {
             return_val.idx = option - 1;
-            return_val.str = menu->options[option - 1];
+            return_val.str = menu->options[option - 1].name;
 
             return return_val;
         }
@@ -50,6 +96,10 @@ menu_return_t standard_menu(const menu_t *menu) {
         printf("Please try again\n");
     }
 }
+
+
+// TEXT MENU FUNCTIONS ----------------------------------------------------------------------------------------------------
+
 
 // struct used to be able to reorder a sorted list
 typedef struct {
@@ -164,12 +214,12 @@ menu_return_t text_menu(const menu_t *menu) {
     // array of pointers to items
     reorder_item_t option_alias[MAX_MENU_ITEMS];
 
-    const int menu_options_length = get_options_length(menu);
+    const int menu_options_length = menu->num_options;
     
     // create an array that matches the main options but able to be unsorted after processing
     for (int i = 0; i < menu_options_length; i++) {
         option_alias[i].idx = i;
-        option_alias[i].str = menu->options[i];
+        option_alias[i].str = menu->options[i].name;
     }
 
     // sort in ascending order of length
@@ -225,10 +275,14 @@ menu_return_t text_menu(const menu_t *menu) {
     free(buf);
 
     res.idx = return_idx;
-    res.str = menu->options[return_idx];
+    res.str = menu->options[return_idx].name;
 
     return res;
 }
+
+
+// SHOW MENU FUNCTIONS ----------------------------------------------------------------------------------------------------
+
 
 menu_return_t show_menu(const menu_t *menu, menu_type_t menu_type) {
     menu_return_t res = { 0, "" };
