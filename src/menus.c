@@ -45,6 +45,29 @@ int str_to_upper(char *str) {
     return 0;
 }
 
+int read_from_stdin(char *buf, size_t buf_size) {
+    int i = 0;
+    char c;
+
+    // the max number of characters to read
+    const int read_until = buf_size - 1;
+
+    // read until new line ( which is when user pressed enter )
+    while ( (c = fgetc(stdin)) != '\n' ) {
+        // add characters to buffer until we fill all but one char
+        // DON'T BREAK BECAUSE WE NEED TO READ INTO NO WHERE TO REMOVE NEXT INPUT
+        if ( i < read_until ) {
+            // set buf character and increment i
+            buf[i++] = c;
+        }
+    }
+
+    // set the end of the string with null terminator
+    buf[i] = '\0';
+
+    return 0;
+}
+
 // INITIALISATION FUNCTIONS -----------------------------------------------------------------------------------------------
 
 
@@ -142,19 +165,27 @@ menu_return_t standard_menu(const menu_t *menu) {
     const int message_exists = strlen(menu->message) != 0;
     if ( message_exists == 1 ) { printf("%s\n", menu->message); }
 
+    // read buffer
+    char buf[10];
+
     while ( true ) {
         printf(">>> ");
 
         int option;
-        int res = scanf("%d", &option);
 
-        const int option_is_valid = option >= 1 && option <= menu_options_length;
+        read_from_stdin(buf, sizeof(buf));
+        int res = sscanf(buf, "%d", &option);
 
-        if ( option_is_valid ) {
-            return_val.idx = option - 1;
-            return_val.str = menu->options[option - 1].name;
+        // if sscanf is successful, process the data, else try again
+        if ( res == 1 ) {
+            const int option_is_valid = option >= 1 && option <= menu_options_length;
 
-            return return_val;
+            if ( option_is_valid ) {
+                return_val.idx = option - 1;
+                return_val.str = menu->options[option - 1].name;
+
+                return return_val;
+            }
         }
 
         printf("Please try again\n");
@@ -312,14 +343,13 @@ menu_return_t text_menu(const menu_t *menu) {
     const unsigned int buf_size = sizeof(char) * (longest_str + 2);
 
     // allocate some memory and set all chars to null terminators
-    // TODO: fix buffer overflow
     char *buf = malloc( buf_size );
     memset(buf, '\0', buf_size);
 
     int return_idx = -1;
 
-    while ( 1 ) {
-        scanf("%s", buf);
+    while ( true ) {
+        read_from_stdin(buf, buf_size);
 
         const bool buf_is_empty = strcmp(buf, "") == 0;
 
