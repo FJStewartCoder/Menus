@@ -1,6 +1,19 @@
 #include "menus.h"
 
 
+// HELPER FUNCTIONS -------------------------------------------------------------------------------------------------------
+
+
+bool menu_has_default(const menu_t *menu) {
+    return menu->default_ptr != NULL;
+}
+
+int get_default_index(const menu_t *menu) {
+    // get the index by getting the size difference from the start of the array and divide by item size
+    return menu->default_ptr - menu->options;
+}
+
+
 // INITIALISATION FUNCTIONS -----------------------------------------------------------------------------------------------
 
 
@@ -10,7 +23,10 @@ menu_t create_menu(char *name, char *message) {
     
     // this must be set to 0 otherwise we will have segfault
     menu.num_options = 0;
-    menu.is_valid = true;
+
+    // initialise booleans
+    menu.is_valid = true;   
+    menu.default_ptr = NULL;
 
     // copy the strings into the memory
     if ( strlen(name) > MAX_MENU_NAME_LENGTH ) {
@@ -46,19 +62,32 @@ menu_item_t *add_menu_item(menu_t *menu, char *name, bool is_default) {
 
     // initialise its values
     new_item.name = name;
-    new_item.is_default = is_default;
 
+    if ( menu_has_default(menu) ) {
+        // set default status to false
+        is_default = false;
+    }
+
+    // set default to is default ( will be false if already has default or whatever the user selects otherwise )
+    new_item.is_default = is_default;
+    
     // add the item and increment the size count
     menu->options[menu->num_options] = new_item;
+
+    // create a pointer to the current item ( needed for default ptr and return value )
+    menu_item_t *option_ptr = &menu->options[menu->num_options];
+
+    // if the current item is default then set the default ptr to this item
+    if ( is_default ) {
+        menu->default_ptr = option_ptr;
+    }
+
+    // increment option count
     menu->num_options = menu->num_options + 1;
     
     // return a pointer to the new item
-    return &menu->options[menu->num_options - 1];
+    return option_ptr;
 }
-
-
-// HELPER FUNCTIONS -------------------------------------------------------------------------------------------------------
-
 
 
 // STANDARD MENU FUNCTIONS ------------------------------------------------------------------------------------------------
@@ -82,7 +111,7 @@ menu_return_t standard_menu(const menu_t *menu) {
     const int message_exists = strlen(menu->message) != 0;
     if ( message_exists == 1 ) { printf("%s\n", menu->message); }
 
-    while ( 1 ) {
+    while ( true ) {
         printf(">>> ");
 
         int option;
@@ -260,6 +289,12 @@ menu_return_t text_menu(const menu_t *menu) {
 
     while ( 1 ) {
         scanf("%s", buf);
+
+        const bool buf_is_empty = strcmp(buf, "") == 0;
+
+        if ( buf_is_empty && menu_has_default(menu) ) {
+            return_idx = get_default_index(menu);
+        }
 
         for (int i = 0; i < menu_options_length; i++) {
             if ( strcmp(option_alias[i].alias, buf) == 0 ) {
