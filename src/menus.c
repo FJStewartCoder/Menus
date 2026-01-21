@@ -13,6 +13,37 @@ int get_default_index(const menu_t *menu) {
     return menu->default_ptr - menu->options;
 }
 
+int str_to_lower(char *str) {
+    const int a_diff = 'A' - 'a';
+
+    // iterate each character and set to lowercase
+    for ( int i = 0; i < strlen(str); i++ ) {
+        char cur_char = str[i];
+
+        // if the character can be lowercase in english alphabet
+        if ( cur_char >= 'A' && cur_char <= 'Z' ) {
+            str[i] = cur_char - a_diff;
+        }
+    }
+
+    return 0;
+}
+
+int str_to_upper(char *str) {
+    const int a_diff = 'A' - 'a';
+
+    // iterate each character and set to lowercase
+    for ( int i = 0; i < strlen(str); i++ ) {
+        char cur_char = str[i];
+
+        // if the character can be lowercase in english alphabet
+        if ( cur_char >= 'a' && cur_char <= 'z' ) {
+            str[i] = cur_char + a_diff;
+        }
+    }
+
+    return 0;
+}
 
 // INITIALISATION FUNCTIONS -----------------------------------------------------------------------------------------------
 

@@ -44,5 +44,8 @@ menu_item_t *add_menu_item(menu_t *menu, char *name, bool is_default);
 
 menu_return_t show_menu(const menu_t *menu, menu_type_t menu_type);
 
+int str_to_lower(char *str);
+int str_to_upper(char *str);
+
 
 #endif // MENUS_H
