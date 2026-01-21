@@ -11,8 +11,9 @@ int main() {
     }
     
     menu_return_t res = show_menu(&menu1, TEXT);
+    menu_return_t res2 = show_menu(&menu1, STANDARD);
 
-    printf("%s\n", res.str);
+    printf("%s %s\n", res.str, res2.str);
 
     return 0;
 }

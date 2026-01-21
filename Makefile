@@ -1,5 +1,5 @@
-menus.o:
-	gcc src/menus.c -Iinclude -c
+menus.o: src/menus.c
+	gcc $^ -Iinclude -c
 
 clean:
 	rm *.o
