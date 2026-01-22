@@ -251,7 +251,7 @@ aliases_t get_aliases(reorder_item_t option_aliases[MAX_MENU_ITEMS], unsigned in
     // a pointer to the start of the current string
     char *cur_ptr = aliases.alias_string;
 
-    // iterate each option
+    // iterate each menu option
     for (int i = 0; i < length; i++) {
         // get the current string option
         const char *option = option_aliases[i].str;
@@ -265,6 +265,10 @@ aliases_t get_aliases(reorder_item_t option_aliases[MAX_MENU_ITEMS], unsigned in
         for (int j = 0; j < strlen(option); j++) {
             alias[j] = option[j];
             alias[j + 1] = '\0';
+
+            // convert the new alias to lowercase
+            // ENSURES THAT WHEN COMPARING THE NEW ALIAS IS LOWERCASE
+            str_to_lower(alias);
 
             int valid = 1;
 
@@ -366,6 +370,9 @@ menu_return_t text_menu(menu_t *menu) {
 
     while ( true ) {
         read_from_stdin(buf, buf_size);
+
+        // ensure that the check item is in the same case as all of the aliases
+        str_to_lower(buf);
 
         const bool buf_is_empty = strcmp(buf, "") == 0;
 
