@@ -187,7 +187,7 @@ menu_return_t standard_menu(menu_t *menu) {
 
             if ( option_is_valid ) {
                 return_val.idx = option - 1;
-                return_val.str = menu->options[option - 1].name;
+                strcpy(return_val.str, menu->options[option - 1].name);
 
                 return return_val;
             }
@@ -401,7 +401,9 @@ menu_return_t text_menu(menu_t *menu) {
     free_aliases(&aliases);
 
     res.idx = return_idx;
-    res.str = menu->options[return_idx].name;
+    
+    // copy the string to ensure that it doesn't go out of scope
+    strcpy(res.str, menu->options[return_idx].name);
 
     return res;
 }

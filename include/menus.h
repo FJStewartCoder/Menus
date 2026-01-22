@@ -31,7 +31,7 @@ typedef struct {
 
 typedef struct {
     unsigned int idx;
-    char *str; 
+    char str[MAX_MENU_ITEM_NAME_LENGTH];
 } menu_return_t;
 
 typedef enum {
