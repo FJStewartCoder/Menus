@@ -14,7 +14,10 @@ typedef enum {
 
 class MenuItem {
     public:
+        // name and alias 
         std::string name;
+        std::string alias;
+
         bool isDefault;
     
         MenuItem(std::string name = "", bool isDefault = false);
@@ -23,8 +26,11 @@ class MenuItem {
 class Menu {
     private:
         std::vector<MenuItem> items;
+
         std::string name;
         std::string description;
+
+        bool hasDefault = false;
 
     public:
         Menu(std::string name = "", std::string description = "");
@@ -32,8 +38,8 @@ class Menu {
         void AddItem(std::string name = "", bool isDefault = false);
 
         // show functions
-        void ShowStandard();
-        void ShowAlt();
+        std::string ShowStandard();
+        std::string ShowAlt();
 };
 
 
