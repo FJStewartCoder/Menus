@@ -32,6 +32,9 @@ class Menu {
 
         bool hasDefault = false;
 
+        // function that sets the alias for each current item
+        void SetAliases();
+
     public:
         Menu(std::string name = "", std::string description = "");
 
