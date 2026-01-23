@@ -93,6 +93,20 @@ Menu::Menu(std::string name, std::string description) {
     this->description = description;
 }
 
+bool Menu::HasDefault() {
+    return defaultIndex != -1;
+}
+
+MenuItem *Menu::GetDefault() {
+    if ( !HasDefault() ) {
+        return nullptr;
+    }
+
+    // return the address of where the item is in the vector
+    return &items[defaultIndex];
+}
+
+// TODO: add validation scripts and other scripts for default items
 void Menu::AddItem(std::string name, bool isDefault) {
     MenuItem newItem(name, isDefault);
     items.push_back(newItem);

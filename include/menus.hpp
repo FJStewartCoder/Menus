@@ -32,7 +32,9 @@ class Menu {
         std::string name;
         std::string description;
 
-        bool hasDefault = false;
+        // the index in the items at which the default item is
+        // -1 is no default
+        int defaultIndex = -1;
 
         // function that sets the alias for each current item
         void SetAliases();
@@ -41,6 +43,10 @@ class Menu {
         Menu(std::string name = "", std::string description = "");
 
         void AddItem(std::string name = "", bool isDefault = false);
+
+        bool HasDefault();
+
+        MenuItem *GetDefault();
 
         // show functions
         std::string ShowStandard();
