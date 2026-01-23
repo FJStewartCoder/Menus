@@ -13,6 +13,7 @@
 const std::string EMPTY_STRING_ERROR = "Please enter an input";
 const std::string NOT_INTEGER_ERROR = "Please enter a number";
 const std::string OUT_OF_RANGE = "Please enter a number within the valid range";
+const std::string ERROR_GENERAL = "Please try again";
 
 
 // UTILITIES --------------------------------------------------------------------------
@@ -34,6 +35,37 @@ std::string ReadStdin() {
     return newStr;
 }
 
+std::string ToLower(std::string str) {
+    std::string res;
+    const char aDiff = 'A' - 'a';
+
+    for ( const auto &c : str ) {
+        if ( c >= 'A' && c <= 'Z' ) {
+            res += ( c - aDiff );
+        }
+        else {
+            res += c;
+        }
+    }
+
+    return res;
+}
+
+std::string ToUpper(std::string str) {
+    std::string res;
+    const char aDiff = 'A' - 'a';
+
+    for ( const auto &c : str ) {
+        if ( c >= 'a' && c <= 'z' ) {
+            res += ( c + aDiff );
+        }
+        else {
+            res += c;
+        }
+    }
+
+    return res;
+}
 
 // MENU ITEMS -------------------------------------------------------------------------
 
@@ -41,6 +73,15 @@ std::string ReadStdin() {
 MenuItem::MenuItem(std::string name, bool isDefault) {
     this->name = name;
     this->isDefault = false;
+}
+
+std::string MenuItem::GetAliasedName() {
+    if ( isDefault ) {
+        return "(" + ToUpper( alias ) + ")" + ToLower( name.substr(alias.size()) );
+    }
+
+    return "(" + ToLower( alias ) + ")" + ToLower( name.substr(alias.size()) );
+    
 }
 
 
@@ -120,7 +161,25 @@ void Menu::SetAliases() {
 
     // create all of the aliases and set them in the order of aliasVec
     for ( auto &item : aliasVec ) {
-        std::cout << item->name << std::endl;
+        // create a string buffer
+        std::string currentAlias;
+
+        // iterate each character
+        for ( char &c : item->name ) {
+            // add that character to the end of the string
+            currentAlias += c;
+
+            const bool aliasExists = aliasSet.find(currentAlias) != aliasSet.end();
+
+            // if the alias doesn't already exist, set that alias and stop this search
+            if ( !aliasExists ) {
+                // add the alias if not existing
+                aliasSet.insert(currentAlias);
+
+                item->alias = currentAlias;
+                break;
+            }
+        }
     }
 }
 
@@ -147,11 +206,39 @@ std::string Menu::ShowAlt() {
         return "ERROR";
     }
 
+    // print out all of the menu items
     for ( int i = 0; i < numItems - 1; i++ ) {
-        cout << items.at(i).name << ", ";
+        cout << items[i].GetAliasedName() << ", ";
     }
 
-    cout << items.back().name << ": " << endl;
+    // print the last item with different formatting
+    cout << items.back().GetAliasedName() << ": " << endl;
 
-    return "NOT IMPLEMENTED YET";
+    std::string chosenString;
+    bool selectionMade = false;
+
+    // get the valid user input
+    while ( !selectionMade ) {
+        string choice = ReadStdin();
+
+        if ( choice.empty() ) {
+            cout << EMPTY_STRING_ERROR << endl;
+            continue;
+        }
+
+        for ( const auto& item : items ) {
+            if ( ToLower( choice ) == ToLower( item.alias ) ) {
+                chosenString = item.name;
+                selectionMade = true;
+                break;
+            }
+        }
+
+        if ( !selectionMade ) {
+            cout << ERROR_GENERAL << endl;
+        }
+    }
+
+    // return the string that represents the item selected
+    return chosenString;
 }

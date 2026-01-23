@@ -21,6 +21,8 @@ class MenuItem {
         bool isDefault;
     
         MenuItem(std::string name = "", bool isDefault = false);
+
+        std::string GetAliasedName();
 };
 
 class Menu {
