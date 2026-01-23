@@ -210,15 +210,15 @@ typedef struct {
 } reorder_item_t;
 
 int len_sort(const void *a, const void *b) {
-    const reorder_item_t* a2 = a;
-    const reorder_item_t* b2 = b;
+    const reorder_item_t* a2 = (reorder_item_t*)a;
+    const reorder_item_t* b2 = (reorder_item_t*)b;
 
     return strlen(a2->str) - strlen(b2->str);
 }
 
 int idx_sort(const void *a, const void *b) {
-    const reorder_item_t* a2 = a;
-    const reorder_item_t* b2 = b;
+    const reorder_item_t* a2 = (reorder_item_t*)a;
+    const reorder_item_t* b2 = (reorder_item_t*)b;
 
     return a2->idx - b2->idx;
 }
@@ -240,7 +240,7 @@ aliases_t get_aliases(reorder_item_t option_aliases[MAX_MENU_ITEMS], unsigned in
     unsigned int mem_size = MAX_MENU_ITEM_NAME_LENGTH * MAX_MENU_ITEMS;
 
     // allocate memory
-    aliases.alias_string = malloc(mem_size * sizeof(char));
+    aliases.alias_string = (char *)malloc(mem_size * sizeof(char));
 
     // if null, return error
     if ( aliases.alias_string == NULL ) {
@@ -363,7 +363,7 @@ menu_return_t text_menu(menu_t *menu) {
     const unsigned int buf_size = sizeof(char) * (MAX_MENU_ITEM_NAME_LENGTH + 2);
 
     // allocate some memory and set all chars to null terminators
-    char *buf = malloc( buf_size );
+    char *buf = (char *)malloc( buf_size );
     memset(buf, '\0', buf_size);
 
     int return_idx = -1;
