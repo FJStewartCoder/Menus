@@ -72,7 +72,7 @@ std::string ToUpper(std::string str) {
 
 MenuItem::MenuItem(std::string name, bool isDefault) {
     this->name = name;
-    this->isDefault = false;
+    this->isDefault = isDefault;
 }
 
 std::string MenuItem::GetAliasedName() {
@@ -106,8 +106,22 @@ MenuItem *Menu::GetDefault() {
     return &items[defaultIndex];
 }
 
-// TODO: add validation scripts and other scripts for default items
 void Menu::AddItem(std::string name, bool isDefault) {
+    // if the current item is default, perform default checks
+    if ( isDefault ) {
+        // if the menu already has a default, set isDefault to false
+        // because we can't have a new default
+        if ( HasDefault() ) {
+            isDefault = false;
+        }
+        // if the menu doesn't already have a default, set the new default index
+        // set it to the size of the items list because the size is last idx + 1 or next index
+        else {
+            defaultIndex = items.size();
+        }
+    }
+    
+    // create a new items and add to the items list
     MenuItem newItem(name, isDefault);
     items.push_back(newItem);
 }
@@ -123,6 +137,17 @@ std::string Menu::ShowStandard() {
     for ( int i = 0; i < numMenuItems; i++ ) {
         cout << i + 1 << " - " << items.at(i).name << endl;
     }
+
+    // get the message that is shown as the input field
+    string message = description + ": ";
+
+    // if there is none, show a default option
+    if ( description.empty() ) {
+        message = "Select an option: ";
+    }
+
+    // show the input field
+    cout << message;
 
     // the chosen value by the user
     int intChoice;
@@ -226,7 +251,7 @@ std::string Menu::ShowAlt() {
     }
 
     // print the last item with different formatting
-    cout << items.back().GetAliasedName() << ": " << endl;
+    cout << items.back().GetAliasedName() << ": ";
 
     std::string chosenString;
     bool selectionMade = false;
@@ -236,8 +261,14 @@ std::string Menu::ShowAlt() {
         string choice = ReadStdin();
 
         if ( choice.empty() ) {
-            cout << EMPTY_STRING_ERROR << endl;
-            continue;
+            // get the default item
+            MenuItem *defaultItem = GetDefault();
+
+            // if there is a default item, set the chosen string and break out of loop
+            if ( defaultItem != nullptr ) {
+                chosenString = defaultItem->name;
+                break;
+            }
         }
 
         for ( const auto& item : items ) {
