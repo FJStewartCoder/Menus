@@ -25,7 +25,11 @@ class MenuItem {
         // determines whether or not the menu item is the default
         bool isDefault;
     
-        MenuItem(std::string name = "", bool isDefault = false);
+        MenuItem(
+            std::string name,
+            std::string description = "",
+            bool isDefault = false
+        );
 
         friend std::ostream &operator<<(std::ostream &os, const MenuItem &item);
 };
@@ -78,10 +82,18 @@ class Menu {
         // function that sets the alias for each current item
         void SetAliases();
 
-    public:
-        Menu(std::string name = "", std::string description = "");
+        // helper functions that are used in several menus
+        void OutputHeading();
+        void OutputMessage();
 
-        void AddItem(std::string name = "", bool isDefault = false);
+    public:
+        Menu(
+            std::string name = "",
+            std::string description = "",
+            std::string message = ""
+        );
+
+        void AddItem(MenuItem newItem);
 
         bool HasDefault();
 

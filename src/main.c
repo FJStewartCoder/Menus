@@ -1,8 +1,24 @@
 #include "menus.h"
 
 #include <stdio.h>
+#include "input.h"
 
 int main() {
+    char buf[5];
+    printf("Input: ");
+    stdin_to_buf( buf, 5, ORDER_FIRST );
+    printf("You entered: %s\n", buf);
+
+    printf("Input: ");
+    stdin_to_buf( buf, 5, ORDER_LAST );
+    printf("You entered: %s\n", buf);
+
+    printf("Input: ");
+    char *new_buf = stdin_to_new_buf();
+    printf("You entered: %s\n", new_buf);
+
+    free(new_buf);
+
     menu_t menu1 = create_menu("Hello", "This is a menu");
     char *options[] = {"a", "Ab", "abc", "AbCD", "abcde", "AbCDEf", "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm", "abcdefghijklmn", "abcdefghijklmno", "abcdefghijklmnop", "abcdefghijklmnopq", "abcdefghijklmnopqr", "abcdefghijklmnopqrs", "abcdefghijklmnopqrst", "abcdefghijklmnopqrstu", "abcdefghijklmnopqrstuv", "abcdefghijklmnopqrstuvw", "abcdefghijklmnopqrstuvwx", "abcdefghijklmnopqrstuvwxy", "abcdefghijklmnopqrstuvwxyz"};
 
