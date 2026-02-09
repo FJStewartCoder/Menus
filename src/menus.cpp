@@ -75,13 +75,17 @@ MenuItem::MenuItem(std::string name, bool isDefault) {
     this->isDefault = isDefault;
 }
 
-std::string MenuItem::GetAliasedName() {
-    if ( isDefault ) {
-        return "(" + ToUpper( alias ) + ")" + ToLower( name.substr(alias.size()) );
+std::ostream &operator<<(std::ostream &os, const MenuItem &item) {
+    // if default, write as such (DE)fault
+    if ( item.isDefault ) {
+        os << "(" + ToUpper( item.alias ) + ")" + ToLower( item.name.substr(item.alias.size()) );
     }
-
-    return "(" + ToLower( alias ) + ")" + ToLower( name.substr(alias.size()) );
+    // else, write as such (de)fault
+    else {
+        os << "(" + ToLower( item.alias ) + ")" + ToLower( item.name.substr(item.alias.size()) );
+    }
     
+    return os;
 }
 
 
@@ -247,11 +251,11 @@ std::string Menu::ShowAlt() {
 
     // print out all of the menu items
     for ( int i = 0; i < numItems - 1; i++ ) {
-        cout << items[i].GetAliasedName() << ", ";
+        cout << items[i] << ", ";
     }
 
     // print the last item with different formatting
-    cout << items.back().GetAliasedName() << ": ";
+    cout << items.back() << ": ";
 
     std::string chosenString;
     bool selectionMade = false;
