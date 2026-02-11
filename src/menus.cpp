@@ -360,6 +360,10 @@ MenuItem *Menu::ShowAlias() {
 MenuItem *Menu::ShowAliasList() {
     using namespace std;
 
+    // create and set all of the aliases
+    SetAliases();
+
+    // show the menu's message
     OutputHeading();
 
     const int numMenuItems = items.size();
