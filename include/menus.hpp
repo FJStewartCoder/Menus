@@ -37,7 +37,7 @@ class MenuItem {
 
 // MENU DESIGNS
 
-// BASIC
+// LIST
 // -- MENU NAME --
 // MENU DESCRIPTION
 // 1 - ITEM
@@ -48,10 +48,10 @@ class MenuItem {
 //
 // MENU MESSAGE >>>
 
-// ALTERNATIVE
+// ALIAS
 // MENU MESSAGE: (I)TEM 1, (IT)EM 2, (ITE)M 3:
 
-// ALTERNATIVE VERTICAL MODE
+// ALIAS LIST
 // -- MENU NAME --
 // MENU DESCRIPTION
 // (I)TEM 1 - ITEM DESCRIPTION
@@ -86,6 +86,12 @@ class Menu {
         void OutputHeading();
         void OutputMessage();
 
+        // gets an input for a list style menu
+        std::string ListInput();
+
+        // gets an input for an alias menu
+        std::string AliasInput();
+
     public:
         Menu(
             std::string name = "",
@@ -100,8 +106,9 @@ class Menu {
         MenuItem *GetDefault();
 
         // show functions
-        std::string ShowStandard();
-        std::string ShowAlt();
+        std::string ShowList();
+        std::string ShowAlias();
+        std::string ShowAliasList();
 };
 
 

@@ -19,10 +19,11 @@ int main() {
         MenuItem("ABC222", "That's a lot of reworks")
     );
 
-    std::string res = menu.ShowStandard();
-    std::string res2 = menu.ShowAlt();
+    std::string res = menu.ShowList();
+    std::string res2 = menu.ShowAlias();
+    std::string res3 = menu.ShowAliasList();
 
-    std::cout << res << " " << res2 << std::endl;
+    std::cout << res << " " << res2 << " " << res3 << std::endl;
 
     return 0;
 }

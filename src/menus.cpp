@@ -18,6 +18,8 @@ const std::string NOT_INTEGER_ERROR = "Please enter a number";
 const std::string OUT_OF_RANGE = "Please enter a number within the valid range";
 const std::string ERROR_GENERAL = "Please try again";
 
+const int ALIAS_LIST_PADDING = 4;
+
 
 // UTILITIES --------------------------------------------------------------------------
 
@@ -159,7 +161,46 @@ void Menu::AddItem(MenuItem newItem) {
     items.push_back(newItem);
 }
 
-std::string Menu::ShowStandard() {
+std::string Menu::ListInput() {
+    using namespace std;
+
+    // get the number of menu items
+    const int numMenuItems = items.size();
+
+    // the chosen value by the user
+    int intChoice;
+
+    while ( true ) {
+        string choice = ReadStdin();
+
+        if ( choice.empty() ) {
+            cout << EMPTY_STRING_ERROR << endl;
+            continue;
+        }
+
+        // scan the buffer into int
+        const bool failed = sscanf(choice.c_str(), "%d", &intChoice) == 0;
+
+        if ( failed ) {
+            cout << NOT_INTEGER_ERROR << endl;
+            continue;
+        }
+        
+        const bool inRange = intChoice >= 1 && intChoice <= numMenuItems;
+
+        if ( !inRange ) {
+            cout << OUT_OF_RANGE << endl;
+            continue;
+        }
+
+        break;
+    }
+
+    // return the string that represents the item selected
+    return items.at(intChoice - 1).name;
+}
+
+std::string Menu::ShowList() {
     using namespace std;
 
     OutputHeading();
@@ -199,37 +240,8 @@ std::string Menu::ShowStandard() {
 
     OutputMessage();
 
-    // the chosen value by the user
-    int intChoice;
-
-    while ( true ) {
-        string choice = ReadStdin();
-
-        if ( choice.empty() ) {
-            cout << EMPTY_STRING_ERROR << endl;
-            continue;
-        }
-
-        // scan the buffer into int
-        const bool failed = sscanf(choice.c_str(), "%d", &intChoice) == 0;
-
-        if ( failed ) {
-            cout << NOT_INTEGER_ERROR << endl;
-            continue;
-        }
-        
-        const bool inRange = intChoice >= 1 && intChoice <= numMenuItems;
-
-        if ( !inRange ) {
-            cout << OUT_OF_RANGE << endl;
-            continue;
-        }
-
-        break;
-    }
-
-    // return the string that represents the item selected
-    return items.at(intChoice - 1).name;
+    // get the input from the user and return it
+    return ListInput();
 }
 
 void Menu::SetAliases() {
@@ -272,30 +284,8 @@ void Menu::SetAliases() {
     }
 }
 
-std::string Menu::ShowAlt() {
-    // reduces unnecessary std::
+std::string Menu::AliasInput() {
     using namespace std;
-
-    // create and set all of the aliases
-    SetAliases();
-
-    // show the menu's message
-    OutputMessage();
-
-    const int numItems = items.size();
-
-    if ( numItems < 1 ) {
-        cout << endl;
-        return "ERROR";
-    }
-
-    // print out all of the menu items
-    for ( int i = 0; i < numItems - 1; i++ ) {
-        cout << items[i] << ", ";
-    }
-
-    // print the last item with different formatting
-    cout << items.back() << ": ";
 
     std::string chosenString;
     bool selectionMade = false;
@@ -330,4 +320,68 @@ std::string Menu::ShowAlt() {
 
     // return the string that represents the item selected
     return chosenString;
+}
+
+std::string Menu::ShowAlias() {
+    // reduces unnecessary std::
+    using namespace std;
+
+    // create and set all of the aliases
+    SetAliases();
+
+    // show the menu's message
+    OutputMessage();
+
+    const int numItems = items.size();
+
+    if ( numItems < 1 ) {
+        cout << endl;
+        return "ERROR";
+    }
+
+    // print out all of the menu items
+    for ( int i = 0; i < numItems - 1; i++ ) {
+        cout << items[i] << ", ";
+    }
+
+    // print the last item with different formatting
+    cout << items.back() << ": ";
+
+    // get the input for alias style menu and return the result
+    return AliasInput();
+}
+
+std::string Menu::ShowAliasList() {
+    using namespace std;
+
+    OutputHeading();
+
+    const int numMenuItems = items.size();
+
+    // print each option with formato:
+    // n - name
+    //     description
+
+    for ( int i = 0; i < numMenuItems; i++ ) {
+        const MenuItem &item = items[i];
+
+        // output the item's name
+        cout << item << endl;
+
+        const bool hasItemDesc = !item.description.empty();
+        if ( hasItemDesc ) {
+            // some padding to differentiate name and description
+            std::string spacing( ALIAS_LIST_PADDING, ' ' );
+
+            cout << spacing << item.description << endl;
+        } 
+    }
+
+    // create a single blank line for nicer formatting
+    cout << endl;
+
+    OutputMessage();
+
+    // get the input for alias style menu and return the result
+    return AliasInput();
 }
