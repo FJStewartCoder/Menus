@@ -19,6 +19,10 @@ class MenuItem {
         // the item description
         std::string description;
 
+        // the index in the menu that it is
+        // could be useful for hashing a result
+        int idx;
+
         // a shortened version of the name to make it easier to select menu items
         std::string alias;
         
@@ -87,10 +91,10 @@ class Menu {
         void OutputMessage();
 
         // gets an input for a list style menu
-        std::string ListInput();
+        MenuItem *ListInput();
 
         // gets an input for an alias menu
-        std::string AliasInput();
+        MenuItem *AliasInput();
 
     public:
         Menu(
@@ -106,9 +110,9 @@ class Menu {
         MenuItem *GetDefault();
 
         // show functions
-        std::string ShowList();
-        std::string ShowAlias();
-        std::string ShowAliasList();
+        MenuItem *ShowList();
+        MenuItem *ShowAlias();
+        MenuItem *ShowAliasList();
 };
 
 

@@ -1,6 +1,8 @@
 #include "menus.hpp"
 
 int main() {
+    using namespace std;
+
     Menu menu("Name", "Description", "Message");
 
     menu.AddItem(
@@ -19,11 +21,13 @@ int main() {
         MenuItem("ABC222", "That's a lot of reworks")
     );
 
-    std::string res = menu.ShowList();
-    std::string res2 = menu.ShowAlias();
-    std::string res3 = menu.ShowAliasList();
+    auto res = menu.ShowList();
+    auto res2 = menu.ShowAlias();
+    auto res3 = menu.ShowAliasList();
 
-    std::cout << res << " " << res2 << " " << res3 << std::endl;
+    cout << res->name << ", idx: " << res->idx << endl;
+    cout << res2->name << ", idx: " << res2->idx << endl;
+    cout << res3->name << ", idx: " << res3->idx << endl;
 
     return 0;
 }

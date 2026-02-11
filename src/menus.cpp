@@ -66,6 +66,7 @@ MenuItem::MenuItem(
     this->name = name;
     this->description = description;
     this->isDefault = isDefault;
+    this->idx = -1;
 }
 
 std::ostream &operator<<(std::ostream &os, const MenuItem &item) {
@@ -157,11 +158,14 @@ void Menu::AddItem(MenuItem newItem) {
         }
     }
     
+    // set the index of the new item to the length of the list
+    newItem.idx = items.size();    
+
     // add the new item to the list
     items.push_back(newItem);
 }
 
-std::string Menu::ListInput() {
+MenuItem *Menu::ListInput() {
     using namespace std;
 
     // get the number of menu items
@@ -197,10 +201,10 @@ std::string Menu::ListInput() {
     }
 
     // return the string that represents the item selected
-    return items.at(intChoice - 1).name;
+    return &items.at(intChoice - 1);
 }
 
-std::string Menu::ShowList() {
+MenuItem *Menu::ShowList() {
     using namespace std;
 
     OutputHeading();
@@ -284,10 +288,10 @@ void Menu::SetAliases() {
     }
 }
 
-std::string Menu::AliasInput() {
+MenuItem *Menu::AliasInput() {
     using namespace std;
 
-    std::string chosenString;
+    MenuItem *chosenItem = NULL;
     bool selectionMade = false;
 
     // get the valid user input
@@ -300,14 +304,16 @@ std::string Menu::AliasInput() {
 
             // if there is a default item, set the chosen string and break out of loop
             if ( defaultItem != nullptr ) {
-                chosenString = defaultItem->name;
+                chosenItem = defaultItem;
                 break;
             }
         }
 
-        for ( const auto& item : items ) {
-            if ( ToLower( choice ) == ToLower( item.alias ) ) {
-                chosenString = item.name;
+        for ( int i = 0; i < items.size(); i++ ) {
+            auto *item = &items.at(i);
+
+            if ( ToLower( choice ) == ToLower( item->alias ) ) {
+                chosenItem = item;
                 selectionMade = true;
                 break;
             }
@@ -319,10 +325,10 @@ std::string Menu::AliasInput() {
     }
 
     // return the string that represents the item selected
-    return chosenString;
+    return chosenItem;
 }
 
-std::string Menu::ShowAlias() {
+MenuItem *Menu::ShowAlias() {
     // reduces unnecessary std::
     using namespace std;
 
@@ -336,7 +342,7 @@ std::string Menu::ShowAlias() {
 
     if ( numItems < 1 ) {
         cout << endl;
-        return "ERROR";
+        return NULL;
     }
 
     // print out all of the menu items
@@ -351,7 +357,7 @@ std::string Menu::ShowAlias() {
     return AliasInput();
 }
 
-std::string Menu::ShowAliasList() {
+MenuItem *Menu::ShowAliasList() {
     using namespace std;
 
     OutputHeading();
